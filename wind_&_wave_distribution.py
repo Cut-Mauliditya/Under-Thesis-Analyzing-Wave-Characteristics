@@ -12,7 +12,7 @@ import matplotlib.cm as cm
 
 from windrose import WindroseAxes
 
-d = pd.read_excel('data2.xlsx')
+d = pd.read_excel('data_obs.xlsx')
 
 def season(month):
     if month in [1, 2, 12]:  
@@ -26,10 +26,9 @@ def season(month):
     else:
         return None
 
-d['Musim'] = d['M'].apply(season)
-d.to_csv('data_musim.csv', index=False)
+d['Season'] = d['M'].apply(season)
+d.to_csv('data_season.csv', index=False)
 
-max_speed = max(d[['Sb', 'Sp1', 'St', 'Sp2']].max())
 
 def windrose(Dm, Sm, ax, title, cmap, legend, bin): 
 
@@ -93,8 +92,6 @@ plt.show()
 Percentage of wave height and direction
 '''
 
-df = pd.read_excel('data_sortir.xlsx')
-
 def fetch_class(f):
     if f == 340.9889:
         return 'SW'     #SW: South West
@@ -119,11 +116,11 @@ def wave_height_class(h):
     else:
         return '>=1.9'
 
-df['Fetch'] = df['F'].apply(fetch_class)
-df['Wave Height'] = df['h'].apply(wave_height_class)
-df = df.dropna(subset=['Fetch'])
+d['Fetch'] = d['F'].apply(fetch_class)
+d['Wave Height'] = d['h'].apply(wave_height_class)
+d = d.dropna(subset=['Fetch'])
 
-pivot_table = df.pivot_table(
+pivot_table = d.pivot_table(
     values='h', 
     index='Fetch Category', 
     columns='Wave Height Category', 
@@ -136,7 +133,7 @@ pivot_table_percentage = (pivot_table / pivot_table.loc['Total', 'Total'])*100
 pivot_table_percentage.loc['Total', 'Total'] = 100
 
 print(pivot_table_percentage)
-pivot_table_percentage.to_excel('hasil_persentase_wave_height.xlsx')
+pivot_table_percentage.to_excel('wave_height_table_percentage.xlsx')
 
 ''''
 
@@ -144,7 +141,7 @@ data distribution
 
 '''
 
-dm = pd.read_excel('data_musimb.xlsx')
+dm = pd.read_excel('data_dist.xlsx')
 
 colors_wd = ['steelblue', 'royalblue']
 colors_ws = ['salmon', 'peru']
